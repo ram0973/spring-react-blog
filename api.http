@@ -1,0 +1,70 @@
+### Get community messages
+GET http://localhost:8080/v1/community/messages
+
+### Get community images
+GET http://localhost:8080/v1/community/images
+
+### Post message
+POST http://localhost:8080/v1/community/messages
+Content-Type: application/json
+
+{
+  "content": ""
+}
+
+### Post image
+POST http://localhost:8080/v1/community/images
+Content-Type:  multipart/form-data; boundary=none
+
+{
+  "title": "",
+  "content": null
+}
+
+
+
+### Register user old
+POST http://localhost:8080/api/v1/accounts/register
+Content-Type: application/json
+
+{
+  "username": "demo_user_test@gmail.com",
+  "password": "demo_password",
+  "authorities": [
+    {
+      "id": "1",
+      "authority": "ROLE_USER"
+    }
+  ]
+}
+
+### Register user new
+POST http://localhost:8080/api/v1/accounts/register
+Content-Type: application/json
+
+{
+  "username": "demo_user_test@gmail.com",
+  "password": "demo_password"
+}
+
+### Authorize user
+GET http://localhost:8080/api/v1/demo/just-auth
+Authorization: Basic demo_user_test@gmail.com demo_password
+
+### Authorize user 2
+GET http://localhost:8080/api/v1/demo/just-role-user
+Authorization: Basic demo_user_test@gmail.com demo_password
+
+### Authorize admin
+GET http://localhost:8080/api/v1/demo/just-role-admin
+Authorization: Basic demo_user_test@gmail.com demo_password
+
+### Register user profile
+POST http://localhost:8080/api/v1/user-profiles
+Authorization: Basic demo_user_test@gmail.com demo_password
+Content-Type: application/json
+
+{
+  "nickname": "new_demo_user",
+  "imageLink": "fake-data"
+}

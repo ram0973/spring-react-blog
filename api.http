@@ -21,6 +21,15 @@ Content-Type:  multipart/form-data; boundary=none
   "content": null
 }
 
+### Login
+POST http://localhost:8080/v1/signIn
+Content-Type: application/json
+
+{
+  "login": "ram0973",
+  "password": "password"
+}
+
 
 
 ### Register user old

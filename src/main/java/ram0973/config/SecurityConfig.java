@@ -7,7 +7,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.intercept.AuthorizationFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
@@ -23,10 +25,12 @@ public class SecurityConfig {
     protected SecurityFilterChain filterChain(@NotNull HttpSecurity http) throws Exception {
         http
             .exceptionHandling(handling -> handling
-                    .authenticationEntryPoint(userAuthenticationEntryPoint)
-                    .addFilterBefore(new UsernamePasswordAuthenticationFilter(), BasicAuthenticationFilter.class)
-                    .addfilterBefore(new JwtAuthFilter(), UsernamePasswordAuthenticationFilter.class)
+                .authenticationEntryPoint(userAuthenticationEntryPoint)
+                //.addFilterBefore(new UsernamePasswordAuthFilter(userAuthenticationProvider), BasicAuthenticationFilter.class)
+                //.addfilterBefore(new JwtAuthFilter(userAuthenticationProvider), UsernamePasswordAuthenticationFilter.class)
             )
+            .addFilterBefore(new UsernamePasswordAuthFilter(userAuthenticationProvider), BasicAuthenticationFilter.class)
+            .addFilterBefore(new JwtAuthFilter(userAuthenticationProvider), UsernamePasswordAuthenticationFilter.class)
             .csrf(AbstractHttpConfigurer::disable)
             // https://docs.spring.io/spring-security/reference/servlet/authentication/rememberme.html
             .sessionManagement(sessionManagement ->
@@ -57,7 +61,7 @@ public class SecurityConfig {
                 .logoutSuccessUrl("/").permitAll()
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID")
-            )
+            );
             //.rememberMe(rememberMe -> rememberMe
             //    .useSecureCookie(true)
             //    .rememberMeServices()

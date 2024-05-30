@@ -1,4 +1,4 @@
 package ram0973.dto;
 
-public class UserDTO {
+public record UserDTO(String id, String TODO) {
 }

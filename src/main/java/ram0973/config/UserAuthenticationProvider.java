@@ -34,17 +34,6 @@ public class UserAuthenticationProvider implements AuthenticationProvider {
         return new UsernamePasswordAuthenticationToken(userDTO, null, Collections.emptyList());
     }
 
-    public Authentication validateToken(String token) {
-        Claims claims = Jwts.parser()
-            .verifyWith(secretKey)
-            .build()
-            .parseSignedClaims(token)
-            .getPayload();
-        String login = claims.getSubject();
-        UserDTO userDTO = authenticationService.findByLogin(login);
-        return new UsernamePasswordAuthenticationToken(userDTO, null, Collections.emptyList());
-    }
-
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         UserDTO userDTO = null;

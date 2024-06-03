@@ -1,4 +1,6 @@
 package ram0973.dto;
 
-public record UserDTO(String id, String TODO) {
+import java.io.Serializable;
+
+public record UserDTO(String id, String TODO) implements Serializable {
 }

@@ -6,15 +6,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.intercept.AuthorizationFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -30,7 +28,6 @@ public class SecurityConfig {
             )
             .addFilterBefore(new UsernamePasswordAuthFilter(userAuthenticationProvider), BasicAuthenticationFilter.class)
             .addFilterBefore(new CookieAuthFilter(userAuthenticationProvider), UsernamePasswordAuthenticationFilter.class)
-            .csrf(AbstractHttpConfigurer::disable)
             // https://docs.spring.io/spring-security/reference/servlet/authentication/rememberme.html
             .sessionManagement(sessionManagement ->
                 sessionManagement
@@ -50,24 +47,23 @@ public class SecurityConfig {
             )
             //.formLogin(AbstractHttpConfigurer::disable)
             // https://docs.spring.io/spring-security/reference/servlet/authentication/logout.html
-            .formLogin(httpSecurityFormLoginConfigurer -> httpSecurityFormLoginConfigurer
-                .loginPage("/login")
-                .usernameParameter("email")
-            )
+            //.formLogin(httpSecurityFormLoginConfigurer -> httpSecurityFormLoginConfigurer
+            //    .loginPage("/login")
+            //    .usernameParameter("email")
+            //)
             .httpBasic((basic) -> basic.securityContextRepository(new HttpSessionSecurityContextRepository()))
             .logout(logout -> logout
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                 .logoutSuccessUrl("/").permitAll()
                 .invalidateHttpSession(true)
-                .deleteCookies("JSESSION") // TODO: check in other places
+                .deleteCookies(CookieAuthFilter.COOKIE_NAME) // TODO: check in other places
             );
-            //.rememberMe(rememberMe -> rememberMe
-            //    .useSecureCookie(true)
-            //    .rememberMeServices()
-            //)
-            //.passwordManagement(AbstractHttpConfigurer::disable)
-            //.httpBasic(AbstractHttpConfigurer::disable)
-
+//        .rememberMe(rememberMe -> rememberMe
+//            .useSecureCookie(true)
+//            .rememberMeServices()
+//        )
+        //.passwordManagement(AbstractHttpConfigurer::disable)
+        //.httpBasic(AbstractHttpConfigurer::disable)
 
 
         //http.addFilterAfter(jwtFilter, UsernamePasswordAuthenticationFilter.class);

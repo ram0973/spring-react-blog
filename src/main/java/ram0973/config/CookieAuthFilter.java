@@ -1,12 +1,10 @@
 package ram0973.config;
 
-import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.constraints.NotNull;
 import lombok.NonNull;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
@@ -24,7 +22,7 @@ public class CookieAuthFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, @NonNull HttpServletResponse response, FilterChain filterChain)
         throws ServletException, IOException {
         Optional<Cookie> cookieAuth = Stream.of(Optional.ofNullable(request.getCookies())
-            .orElse(new Cookie[0]))
+                .orElse(new Cookie[0]))
             .filter(cookie -> COOKIE_NAME.equals(cookie.getName()))
             .findFirst();
         cookieAuth.ifPresent(cookie -> SecurityContextHolder.getContext().setAuthentication(

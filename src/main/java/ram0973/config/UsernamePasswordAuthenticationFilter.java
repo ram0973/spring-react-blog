@@ -14,7 +14,7 @@ import ram0973.dto.CredentialsDTO;
 import java.io.IOException;
 
 @RequiredArgsConstructor
-public class UsernamePasswordAuthFilter extends OncePerRequestFilter {
+public class UsernamePasswordAuthenticationFilter extends OncePerRequestFilter {
     private static final ObjectMapper MAPPER = new ObjectMapper();
     private final UserAuthenticationProvider userAuthenticationProvider;
     @Override

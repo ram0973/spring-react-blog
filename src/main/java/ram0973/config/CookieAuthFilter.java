@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+// I think no need in this
 public class CookieAuthFilter extends OncePerRequestFilter {
 
     public static final String COOKIE_NAME = "JSESSION";

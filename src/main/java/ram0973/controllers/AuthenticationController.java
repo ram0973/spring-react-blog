@@ -3,7 +3,11 @@ package ram0973.controllers;
 import java.net.URI;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
+import java.util.Optional;
+import java.util.stream.Stream;
+
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
@@ -29,17 +33,19 @@ public class AuthenticationController {
     private final UserService userService;
     private final AuthenticationService authenticationService;
 
+    // curl localhost:8080/v1/signIn -X POST -H "content-type: application/json" -d '{"login": "admin", "password": "password"}'
+    // curl localhost:8080/v1/community/messages --cookie "JSESSION=XXXX"
     @PostMapping("/signIn")
     public ResponseEntity<UserDTO> signIn(@AuthenticationPrincipal UserDTO user,
-                                          HttpServletResponse servletResponse) {
+                                          HttpServletResponse response) {
 
         Cookie authCookie = new Cookie(CookieAuthFilter.COOKIE_NAME, authenticationService.createToken(user));
         authCookie.setHttpOnly(true);
         authCookie.setSecure(true);
-        authCookie.setMaxAge((int) Duration.of(1, ChronoUnit.DAYS).toSeconds());
+        authCookie.setMaxAge((int) Duration.of(365, ChronoUnit.DAYS).toSeconds());
         authCookie.setPath("/");
 
-        servletResponse.addCookie(authCookie);
+        response.addCookie(authCookie);
 
         return ResponseEntity.ok(user);
     }
@@ -51,8 +57,13 @@ public class AuthenticationController {
     }
 
     @PostMapping("/signOut")
-    public ResponseEntity<Void> signOut(@AuthenticationPrincipal UserDTO user) {
+    public ResponseEntity<Void> signOut(@AuthenticationPrincipal UserDTO user,
+                                        HttpServletRequest request) {
         SecurityContextHolder.clearContext();
+        Optional<Cookie> authCookie = Stream.of(Optional.ofNullable(request.getCookies()).orElse(new Cookie[0]))
+            .filter(cookie -> CookieAuthFilter.COOKIE_NAME.equals(cookie.getName()))
+            .findFirst();
+        authCookie.ifPresent(cookie -> cookie.setMaxAge(0));
         return ResponseEntity.noContent().build();
     }
 }
